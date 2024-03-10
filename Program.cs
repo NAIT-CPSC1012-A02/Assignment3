@@ -18,11 +18,11 @@ bool isNotValid = true;
 
 
 
+loadMenu();
 while(isNotValid) {
   try {
     
-    loadMenu();
-    userChoice = Prompt("\nEnter a Main Menu Choice: ").ToUpper();
+    userChoice = Prompt("\nEnter a Main Menu Choice ('M' to display menu): ").ToUpper();
 
     if(userChoice == "C") {
       createFile();
@@ -35,7 +35,9 @@ while(isNotValid) {
     } else if(userChoice == "A") {
       dataSize = AddData();
     } else if(userChoice == "E") {
-      
+      editData();
+    } else if(userChoice == "M") {
+      loadMenu();
     } else if(userChoice == "R") {
 
       while(true) {
@@ -83,6 +85,7 @@ void loadMenu() {
 	Console.WriteLine("[A] Add Value in Memory");
 	Console.WriteLine("[E] Edit Value in Memory");
 	Console.WriteLine("[R] Analysis Menu");
+  Console.WriteLine("[M] Display Main Menu");
 	Console.WriteLine("[Q] Quit");
 }
 
@@ -177,39 +180,12 @@ void displayData() {
   } else {
     Console.Clear();
     Console.WriteLine($"\nCurrent Loaded Entries:  {dataSize}\n");
-    Console.WriteLine("{0,-15} {1,10:}\n", "Entry Date", "Amount");
+    Console.WriteLine("{0,4} {1,-15} {2,10:}\n", "[#]", "Entry Date", "Amount");
     for (int i = 0; i < dataSize; i++) {
-      Console.WriteLine("{0,-15} {1,10:c2}", dates[i], salesAmnt[i]);
+      Console.WriteLine("{0,4} {1,-15} {2,10:f2}", "["+i+"]", dates[i], salesAmnt[i]);
     }
   }
 }
-
-
-void createGraph() {
-  Console.WriteLine($"=== Sales of the month of {fileName} ===");
-
-  Console.WriteLine($"Dollars");
-
-  int dollars = 1000;
-  while(dollars >= 0 ) {
-    Console.Write($"{dollars, 4}|");
-    for(int i = 0; i < 10; i++) {
-      if(salesAmnt[i] >= dollars && salesAmnt[i] <= (dollars + 49)) {
-        Console.Write($"{salesAmnt[i], 7:f2}");
-      } else {
-        Console.Write($"{' ', 7}");
-      }
-    }
-    Console.WriteLine();
-    dollars -= 50;
-  }
-
-  // Console.WriteLine("{0,-15} {1,10:}\n", "Entry Date", "Amount");
-  
-}
-
-
-
 
 int AddData() {
   Console.WriteLine($"Number of Data: {dataSize}");
@@ -223,8 +199,69 @@ int AddData() {
   dataSize++;
 
   Console.WriteLine($"\nSuccessfully added to temporary memory. \n{inputDate}, {inputSales:c2}");
+  
   return dataSize;
 }
+
+void editData() {
+  if(dataSize == 0) {
+    throw new Exception($"No Entries loaded from {fileName}. Please load a file to memory or add a value in memory");
+  } else {
+    displayData();
+    while(true) {
+      try { 
+        Console.Write($"Choose index of data to edit [0-{dataSize-1}]: ");
+        int dataIndex = int.Parse(Console.ReadLine());
+        if(dataIndex >=0 && dataIndex < dataSize) {
+          Console.WriteLine($"\nYou are editing this data: \n{dates[dataIndex],-15} {salesAmnt[dataIndex], 10:c2}");
+
+          Console.Write($"Enter Date of Sales: (MM-dd-YYYY): ");
+          string inputDate = Console.ReadLine();
+          Console.Write($"Enter Amount of Sales: (0-1000): ");
+          double inputSales = double.Parse(Console.ReadLine());
+
+          dates[dataIndex] = inputDate;
+          salesAmnt[dataIndex] = inputSales;
+          break;
+        }
+      } catch (Exception ex) {
+        Console.WriteLine(ex.Message);
+      }
+    }
+    Console.WriteLine($"Successfully updated data.");
+    
+  }
+  
+}
+
+void createGraph() {
+  Console.WriteLine($"=== Sales of the month of {fileName} ===");
+
+  Console.WriteLine($"Dollars");
+
+  int dollars = 1000;
+  while(dollars >= 0 ) {
+    Console.Write($"{dollars, 4}|");
+    for(int i = 0; i < salesAmnt.Length; i++) {
+      string[] salesDay = dates[0].Split('-');
+      if(int.Parse(salesDay[1]) == i++) {
+        if(salesAmnt[i] >= dollars && salesAmnt[i] <= (dollars + 49)) {
+          Console.Write($"{salesAmnt[i], 7:f2}");
+        } else {
+          Console.Write($"{' ', 7}");
+        }
+      } else {
+          Console.Write($"{' ', 7}");
+      }
+    }
+    Console.WriteLine();
+    dollars -= 50;
+  }
+
+  // Console.WriteLine("{0,-15} {1,10:}\n", "Entry Date", "Amount");
+  
+}
+
 
 string Prompt(string prompt) {
   string response = "";
