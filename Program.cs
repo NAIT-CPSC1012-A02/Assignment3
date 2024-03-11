@@ -114,7 +114,7 @@ string GetFileName()
         fileIndex += 1;
       }
       Console.Write("Choose File to load: ");
-      fileIndex = int.Parse(Console.ReadLine());
+      fileIndex = int.Parse(Console.ReadLine().Trim());
       
       fileName = files[fileIndex].Name;
       break;
@@ -188,17 +188,19 @@ void displayData() {
 }
 
 int AddData() {
-  Console.WriteLine($"Number of Data: {dataSize}");
-  Console.Write($"Enter Date of Sales: (MM-dd-YYYY): ");
-  string inputDate = Console.ReadLine();
-  Console.Write($"Enter Amount of Sales: (0-1000): ");
-  double inputSales = double.Parse(Console.ReadLine());
+  if(dataSize >= 31) {
+    Console.WriteLine($"Data is already full. Can't add anymore entry");
+  } else {
+    Console.WriteLine($"Number of Data: {dataSize}");
+    string inputDate = checkData("date");
+    string inputSales = checkData("amount");
 
-  dates[dataSize] = inputDate;
-  salesAmnt[dataSize] = inputSales;
-  dataSize++;
+    dates[dataSize] = inputDate;
+    salesAmnt[dataSize] = double.Parse(inputSales);
+    dataSize++;
 
-  Console.WriteLine($"\nSuccessfully added to temporary memory. \n{inputDate}, {inputSales:c2}");
+    Console.WriteLine($"\nSuccessfully added to temporary memory. \n{inputDate}, {inputSales:c2}");
+  }
   
   return dataSize;
 }
@@ -211,16 +213,16 @@ void editData() {
     while(true) {
       try { 
         Console.Write($"Choose index of data to edit [0-{dataSize-1}]: ");
-        int dataIndex = int.Parse(Console.ReadLine());
+        int dataIndex = int.Parse(Console.ReadLine().Trim());
         if(dataIndex >=0 && dataIndex < dataSize) {
           Console.WriteLine($"\nYou are editing this data: \n{dates[dataIndex],-15} {salesAmnt[dataIndex], 10:c2}");
 
-          Console.Write($"Enter Date of Sales: (MM-dd-YYYY): ");
-          string inputDate = Console.ReadLine();
+          // Console.Write($"Enter Date of Sales: (MM-dd-YYYY): ");
+          // string inputDate = Console.ReadLine();
           Console.Write($"Enter Amount of Sales: (0-1000): ");
           double inputSales = double.Parse(Console.ReadLine());
 
-          dates[dataIndex] = inputDate;
+          // dates[dataIndex] = inputDate;
           salesAmnt[dataIndex] = inputSales;
           break;
         }
@@ -229,7 +231,6 @@ void editData() {
       }
     }
     Console.WriteLine($"Successfully updated data.");
-    
   }
   
 }
@@ -266,8 +267,42 @@ void createGraph() {
 string Prompt(string prompt) {
   string response = "";
   Console.Write(prompt);
-  response = Console.ReadLine();
+  response = Console.ReadLine().Trim();
   return response;
+}
+
+string checkData(string dataType) {
+  string myData = "";
+  while(true) {
+    try {
+      if(dataType == "date") {
+        
+        Console.Write($"Enter Date of Sales: (MM-dd-YYYY): ");
+        myData = Console.ReadLine();
+        if(dates.Contains(myData)) {
+          Console.WriteLine($"Data already exist on this date. Please enter another date or choose Edit Data");
+        } else {
+          break;
+        }
+      } else if(dataType == "amount") {
+
+        Console.Write($"Enter Amount of Sales: (0-1000): ");
+        myData = Console.ReadLine();
+
+        if(double.Parse(myData) < 0 || double.Parse(myData) > 1000) {
+          Console.WriteLine($"Invalid sales amount. Must be between 0 and 1000");
+        } else {
+          break;
+        }
+      }
+
+    } catch (Exception ex) {
+      Console.WriteLine(ex.Message);
+    }
+
+  }
+  
+  return myData;
 }
 
 // string Prompt(string question) {
