@@ -1,9 +1,5 @@
-﻿using System.Linq;
-
-// string proceed = "";
-// string promptYN = "";
-
-int maxDataSize = 31;
+﻿
+const int maxDataSize = 31;
 int dataSize = 0;
 string[] dataInFile;
 string[] dates = new string[maxDataSize];
@@ -15,8 +11,6 @@ string filePath = "";
 
 bool isNotValid = true;
 //Console.Clear();
-
-
 
 loadMenu();
 while(isNotValid) {
@@ -155,8 +149,8 @@ int loadData() {
       dataSize++;
     }
   }
-  Console.WriteLine($"\nLoad complete. {fileName} has {dataSize} data entries");
 
+  Console.WriteLine($"\nLoad complete. {fileName} has {dataSize} data entries");
   return dataSize;
 }
 
@@ -217,12 +211,8 @@ void editData() {
         if(dataIndex >=0 && dataIndex < dataSize) {
           Console.WriteLine($"\nYou are editing this data: \n{dates[dataIndex],-15} {salesAmnt[dataIndex], 10:c2}");
 
-          // Console.Write($"Enter Date of Sales: (MM-dd-YYYY): ");
-          // string inputDate = Console.ReadLine();
           Console.Write($"Enter Amount of Sales: (0-1000): ");
           double inputSales = double.Parse(Console.ReadLine());
-
-          // dates[dataIndex] = inputDate;
           salesAmnt[dataIndex] = inputSales;
           break;
         }
@@ -235,31 +225,59 @@ void editData() {
   
 }
 
+
 void createGraph() {
+
+  // filePath = $"data/{fileName}";
+  // dataInFile = File.ReadAllLines(filePath);
+  // Array.Sort(dataInFile);
+  
+  
   Console.WriteLine($"=== Sales of the month of {fileName} ===");
 
   Console.WriteLine($"Dollars");
 
+  
+  Array.Sort(dates, salesAmnt, 0, dataSize, StringComparer.Ordinal);
+
   int dollars = 1000;
+  string perLine = "";
+
+    // for(int i = 0; i < dataSize; i++) {
+    //   Console.WriteLine($"{dates[i]}");
+  
+      
+    // }
+
   while(dollars >= 0 ) {
     Console.Write($"{dollars, 4}|");
-    for(int i = 0; i < salesAmnt.Length; i++) {
-      string[] salesDay = dates[0].Split('-');
-      if(int.Parse(salesDay[1]) == i++) {
+    for(int i = 0; i < dataSize; i++) {
+      string[] salesDay = dates[i].Split('-');
+      // Console.Write($"{salesDay[1]}, ");
+      // if(int.Parse(salesDay[1]) == i++) {
         if(salesAmnt[i] >= dollars && salesAmnt[i] <= (dollars + 49)) {
-          Console.Write($"{salesAmnt[i], 7:f2}");
+          perLine += $"{salesAmnt[i], 7:f2}";
+          // Console.Write($"{salesAmnt[i], 7:f2}");
+          break;
         } else {
-          Console.Write($"{' ', 7}");
+          perLine += $"{' ', 7:n2}";
+          // Console.Write($"{'*',3}");
         }
-      } else {
-          Console.Write($"{' ', 7}");
-      }
+      // } else {
+      //     Console.Write($"{' ', 7}");
+      // }
     }
-    Console.WriteLine();
+    Console.WriteLine($"{perLine}");
+    perLine = "";
     dollars -= 50;
   }
 
-  // Console.WriteLine("{0,-15} {1,10:}\n", "Entry Date", "Amount");
+  Console.Write("{0, 5}", "Date|");
+  for(int i = 0; i < dataSize; i++) {
+    string[] salesDay = dates[i].Split('-');
+    Console.Write($"{salesDay[1], 7}");
+  }
+  Console.WriteLine();
   
 }
 
