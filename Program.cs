@@ -272,11 +272,19 @@ void createGraph() {
     dollars -= 50;
   }
 
-  Console.Write("{0, 5}", "Date|");
+  string line = "-----";
+  string days = "";
+
   for(int i = 0; i < dataSize; i++) {
     string[] salesDay = dates[i].Split('-');
-    Console.Write($"{salesDay[1], 7}");
+    line += "-------";
+    days += $"{salesDay[1], 7}";
   }
+  Console.WriteLine($"{line}");
+  Console.Write($"Date|");
+  Console.Write($"{days}");
+
+
   Console.WriteLine();
   
 }
