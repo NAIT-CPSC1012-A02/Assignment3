@@ -1,16 +1,19 @@
 ﻿
 const int maxDataSize = 31;
 int dataSize = 0;
+int minValue = 0;
+int maxValue = 100;
 string[] dataInFile;
 string[] dates = new string[maxDataSize];
 double[] salesAmnt = new double[maxDataSize];
+
 
 string userChoice = "";
 string fileName = "";
 string filePath = "";
 
 bool isNotValid = true;
-//Console.Clear();
+Console.Clear();
 
 loadMenu();
 while(isNotValid) {
@@ -47,7 +50,7 @@ while(isNotValid) {
             double highestSales = salesAmnt.Max();
             Console.WriteLine($"Highest amount in sales is: {highestSales:c2}");
           } else if(userSubChoice == "L") {
-            double lowestSales = salesAmnt.Min();
+            double lowestSales = lowestSalesInData();
             Console.WriteLine($"Lowest amount in sales is: {lowestSales:c2}");
           } else if(userSubChoice == "G") {
             createGraph();
@@ -56,7 +59,6 @@ while(isNotValid) {
           }
         }
       }
-
     } else if (userChoice == "Q") {
       isNotValid = false;
       throw new Exception("Thank you for using this application. Come back anytime.");
@@ -222,39 +224,28 @@ void editData() {
     }
     Console.WriteLine($"Successfully updated data.");
   }
-  
 }
 
+double lowestSalesInData() {
+  double min = salesAmnt[0];
+  for(int i = 0; i < dataSize; i++) {
+    if(salesAmnt[i] < min) {
+      min = salesAmnt[i];
+    }
+  }
+  return min;
+}
 
 void createGraph() {
-
-  // filePath = $"data/{fileName}";
-  // dataInFile = File.ReadAllLines(filePath);
-  // Array.Sort(dataInFile);
-  
-  
   Console.WriteLine($"=== Sales of the month of {fileName} ===");
-
   Console.WriteLine($"Dollars");
+  Array.Sort(dates, salesAmnt,0, dataSize);
 
-  
-  Array.Sort(dates, salesAmnt, 0, dataSize);
-
-  int dollars = 1000;
+  int dollars = 100;
   string perLine = "";
 
   while(dollars >= 0 ) {
     Console.Write($"{dollars, 4}|");
-    // for(int i = 0; i < dataSize; i++) {
-    //   string[] salesDay = dates[i].Split('-');
-      
-    //   if(salesAmnt[i] >= dollars && salesAmnt[i] <= (dollars + 49)) {
-    //     perLine += $"{salesAmnt[i], 7:f2}";
-    //     break;
-    //   } else {
-    //     perLine += $"{' ', 7:n2}";
-    //   }
-    // }
     string[] salesDay = dates[0].Split('-');
 
     for(int i = 1; i <= maxDataSize; i++) {
@@ -262,19 +253,18 @@ void createGraph() {
       int dayIndex = Array.IndexOf(dates, $"{salesDay[0]}-{formatDay}-{salesDay[2]}"); 
 
       if(dayIndex != -1) {
-        if(salesAmnt[dayIndex] >= dollars && salesAmnt[dayIndex] <= (dollars + 49)) {
-          perLine += $"{salesAmnt[dayIndex], 7:f2}";
-          break;
+        if(salesAmnt[dayIndex] >= dollars && salesAmnt[dayIndex] <= (dollars + 9)) {
+          perLine += $"{salesAmnt[dayIndex], 3}";
         } else {
-          perLine += $"{' ', 5}";
+          perLine += $"{' ', 3}";
         }
       } else {
-        perLine += $"{' ', 5}";
+        perLine += $"{' ', 3}";
       }  
     }
     Console.WriteLine($"{perLine}");
     perLine = "";
-    dollars -= 50;
+    dollars -= 10;
   }
 
   string line = "-----";
@@ -282,22 +272,15 @@ void createGraph() {
 
   for(int i = 1; i <= maxDataSize; i++) {
     string formatDay = i.ToString("00");
-    line += "----";
-    days += $"{formatDay, 5}";
+    line += "---";
+    days += $"{formatDay, 3}";
   }
 
-  // for(int i = 0; i < dataSize; i++) {
-  //   string[] salesDay = dates[i].Split('-');
-  //   line += "-------";
-  //   days += $"{salesDay[1], 7}";
-  // }
   Console.WriteLine($"{line}");
   Console.Write($"Date|");
   Console.Write($"{days}");
 
-
-  Console.WriteLine();
-  
+  Console.WriteLine($"\n");
 }
 
 
@@ -323,75 +306,18 @@ string checkData(string dataType) {
         }
       } else if(dataType == "amount") {
 
-        Console.Write($"Enter Amount of Sales: (0-1000): ");
+        Console.Write($"Enter Amount of Sales: (0-100): ");
         myData = Console.ReadLine();
 
-        if(double.Parse(myData) < 0 || double.Parse(myData) > 1000) {
-          Console.WriteLine($"Invalid sales amount. Must be between 0 and 1000");
+        if(double.Parse(myData) < minValue || double.Parse(myData) > maxValue) {
+          Console.WriteLine($"Invalid sales amount. Must be between 0 and 100");
         } else {
           break;
         }
       }
-
     } catch (Exception ex) {
       Console.WriteLine(ex.Message);
     }
-
   }
-  
   return myData;
 }
-
-// string Prompt(string question) {
-//   while(!isNotValid) {
-//     try {
-//       Console.Write($"{question}: ");
-//       promptYN = Console.ReadLine().ToUpper();
-//       if(promptYN.Length == 1 && (promptYN == "Y" || promptYN == "N")) {
-//         isNotValid = true;
-//       } else {
-//         isNotValid = false;
-//         throw new Exception($"Program only accepts 'Y' or 'N'");
-//       }
-//     } catch (Exception ex) {
-//       Console.WriteLine(ex.Message);
-//     }
-//   }
-//   return promptYN;
-// }
-
-
-
-
-
-// string checkDate() {
-//   string myDate = "";
-//   isNotValid = true;
-//   while(isNotValid) {
-//     try {
-//       myDate = Console.ReadLine();
-//       if(int.Parse(myDate.Substring(0, 2)) > 12) {
-//         throw new Exception("You entered an invalid month. ");
-//       } else {
-//         isNotValid = false;
-//       }
-//     } catch (Exception ex) {
-//       Console.WriteLine(ex.Message);
-//     }
-
-//   }
-  
-//   return myDate;
-// }
-
-
-// string disclaimer(string line1, string line2, string line3, string line4) {
-//   string response;
-// 	Console.WriteLine($"{line1}");
-// 	Console.WriteLine($"{line2}");
-// 	Console.WriteLine($"{line3}");
-// 	Console.WriteLine();
-// 	response = Prompt(line4);
-// 	Console.WriteLine();
-//   return response;
-// }
