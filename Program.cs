@@ -238,34 +238,39 @@ void createGraph() {
   Console.WriteLine($"Dollars");
 
   
-  Array.Sort(dates, salesAmnt, 0, dataSize, StringComparer.Ordinal);
+  Array.Sort(dates, salesAmnt, 0, dataSize);
 
   int dollars = 1000;
   string perLine = "";
 
-    // for(int i = 0; i < dataSize; i++) {
-    //   Console.WriteLine($"{dates[i]}");
-  
-      
-    // }
-
   while(dollars >= 0 ) {
     Console.Write($"{dollars, 4}|");
-    for(int i = 0; i < dataSize; i++) {
-      string[] salesDay = dates[i].Split('-');
-      // Console.Write($"{salesDay[1]}, ");
-      // if(int.Parse(salesDay[1]) == i++) {
-        if(salesAmnt[i] >= dollars && salesAmnt[i] <= (dollars + 49)) {
-          perLine += $"{salesAmnt[i], 7:f2}";
-          // Console.Write($"{salesAmnt[i], 7:f2}");
+    // for(int i = 0; i < dataSize; i++) {
+    //   string[] salesDay = dates[i].Split('-');
+      
+    //   if(salesAmnt[i] >= dollars && salesAmnt[i] <= (dollars + 49)) {
+    //     perLine += $"{salesAmnt[i], 7:f2}";
+    //     break;
+    //   } else {
+    //     perLine += $"{' ', 7:n2}";
+    //   }
+    // }
+    string[] salesDay = dates[0].Split('-');
+
+    for(int i = 1; i <= maxDataSize; i++) {
+      string formatDay = i.ToString("00");
+      int dayIndex = Array.IndexOf(dates, $"{salesDay[0]}-{formatDay}-{salesDay[2]}"); 
+
+      if(dayIndex != -1) {
+        if(salesAmnt[dayIndex] >= dollars && salesAmnt[dayIndex] <= (dollars + 49)) {
+          perLine += $"{salesAmnt[dayIndex], 7:f2}";
           break;
         } else {
-          perLine += $"{' ', 7:n2}";
-          // Console.Write($"{'*',3}");
+          perLine += $"{' ', 5}";
         }
-      // } else {
-      //     Console.Write($"{' ', 7}");
-      // }
+      } else {
+        perLine += $"{' ', 5}";
+      }  
     }
     Console.WriteLine($"{perLine}");
     perLine = "";
@@ -275,11 +280,17 @@ void createGraph() {
   string line = "-----";
   string days = "";
 
-  for(int i = 0; i < dataSize; i++) {
-    string[] salesDay = dates[i].Split('-');
-    line += "-------";
-    days += $"{salesDay[1], 7}";
+  for(int i = 1; i <= maxDataSize; i++) {
+    string formatDay = i.ToString("00");
+    line += "----";
+    days += $"{formatDay, 5}";
   }
+
+  // for(int i = 0; i < dataSize; i++) {
+  //   string[] salesDay = dates[i].Split('-');
+  //   line += "-------";
+  //   days += $"{salesDay[1], 7}";
+  // }
   Console.WriteLine($"{line}");
   Console.Write($"Date|");
   Console.Write($"{days}");
