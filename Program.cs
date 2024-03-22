@@ -7,7 +7,6 @@ string[] dataInFile;
 string[] dates = new string[maxDataSize];
 double[] salesAmnt = new double[maxDataSize];
 
-
 string userChoice = "";
 string fileName = "";
 string filePath = "";
@@ -151,7 +150,7 @@ int loadData() {
       dataSize++;
     }
   }
-
+  Array.Sort(dates, salesAmnt, 0, dataSize);
   Console.WriteLine($"\nLoad complete. {fileName} has {dataSize} data entries");
   return dataSize;
 }
@@ -239,7 +238,7 @@ double lowestSalesInData() {
 void createGraph() {
   Console.WriteLine($"=== Sales of the month of {fileName} ===");
   Console.WriteLine($"Dollars");
-  Array.Sort(dates, salesAmnt,0, dataSize);
+  
 
   int dollars = 100;
   string perLine = "";
